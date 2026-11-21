@@ -17,4 +17,4 @@ Icons: `icon-halo` (halo ring), `icon-hash` (shows the `#` inside), or `icon-let
 
 The version shown at the bottom of the page is in `index.html`.
 For each release, raise it by one and set the `?v=` number in `index.html` to the same value,
-so browsers fetch the fresh CSS. Current version: 1.
+so browsers fetch the fresh CSS. Current version: 2.
