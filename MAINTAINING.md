@@ -1,50 +1,47 @@
-# Maintaining the hub (legilly.com)
+# Maintaining legilly.com (all projects)
 
-Notes for whoever works on this repo (including AI assistants). The README says what the hub is; this file
-covers how it's built and released.
+Notes for whoever works on these projects (including AI assistants). **This file holds what applies to every
+project**; each project's own `MAINTAINING.md` only covers what's specific to it. The READMEs describe the
+apps; decisions and how things are built go in these files.
+
+## The projects
+
+| Repo (under `Documents\GitHub`) | Address | Kind |
+|---|---|---|
+| `LeGilly.github.io` | https://legilly.com | The hub, and the code shared by every site (`shared/`) |
+| `anime-dashboard` | https://anime.legilly.com | Tool (with a Cloudflare relay at api.legilly.com) |
+| `ba-halo-game` | https://legilly.com/ba-halo-game/ | Game |
+| `irc-idlerpg-web` | https://legilly.com/irc-idlerpg-web/ | Game (the one the owner returns to least: keep changes minimal) |
 
 ## How the owner works
 
-- Changes are committed and pushed by the owner with GitHub Desktop, from `Documents\GitHub\LeGilly.github.io`.
-  An assistant writes files into that folder and suggests a one-line commit summary; it doesn't commit.
-- Projects: `anime-dashboard` (own domain, anime.legilly.com), `ba-halo-game`, `irc-idlerpg-web`,
-  all under the owner's `Documents\GitHub`.
+- Changes are committed and pushed by the owner with GitHub Desktop. An assistant writes files into the repo
+  folders and suggests a one-line commit summary; it doesn't commit or push.
+- Keep each file's line endings as they are (the two game repos use Windows CRLF on the owner's PC).
+- READMEs describe only what the app does and how it works; no process or decisions.
+- Whenever something is decided or changed in how a project works, update the matching `MAINTAINING.md`.
 
-## How it's served
+## Versions and releases (every project)
 
-- This is the `LeGilly.github.io` repository, published by GitHub Pages; `CNAME` points it at `legilly.com`.
-- Every other repo of the owner with GitHub Pages turned on is served under the same domain, e.g.
-  `legilly.com/ba-halo-game/`. Anime Dashboard has its own subdomain instead (anime.legilly.com).
-- DNS for legilly.com is managed in Cloudflare: the GitHub Pages records for legilly.com and
-  anime.legilly.com, and `api.legilly.com`, the custom domain of the dashboard's relay (a Cloudflare Worker).
+1. Versions are major.minor.patch: patch = fixes and small visual changes, minor = a new feature,
+   major = a big change in what the project is or does.
+2. Set the new version where each project shows it (listed in its `MAINTAINING.md`): the visible `vX.Y.Z`
+   and every `?v=` on its own CSS/JS, so browsers fetch the fresh files.
+3. Add an entry at the top of the project's `CHANGELOG.md`: `## X.Y.Z · YYYY-MM-DD`, then one short line per change.
+4. Changes that don't show (README, MAINTAINING, comments) need no new version.
+5. Pages themselves (the HTML) can stay cached in a browser for up to 10 minutes after a push (GitHub Pages);
+   Ctrl+F5 shows the new one at once.
 
-## Layout
+## Rules for every site
 
-`index.html` (the page), `style.css`, and `shared/` (the code shared by every site, see below).
-
-## Adding a project
-
-In `index.html`, copy one `<article class="card">` block, paste it at the top of the list, and change the
-name, description, tags and links. Use `/repo-name/` for a project hosted under legilly.com.
-Icons: `icon-halo` (halo ring), `icon-hash` (shows the `#` inside), or `icon-letter` (put any letter inside,
-e.g. `<div class="icon icon-letter" aria-hidden="true">Q</div>`). Open/Play links stay in the same tab;
-Source links open a new tab (`target="_blank" rel="noopener"`). Also add the project to the README list.
-Then add it to the navigation bar too (see "Adding a project to the bar" below).
-
-## Releasing
-
-1. Version is major.minor.patch: patch = fixes and small visual changes, minor = a new feature (or a new
-   project card), major = a big change in what the hub is or does.
-2. Set it in `index.html`: footer `vX.Y.Z` and the `?v=` on style.css.
-3. Add an entry at the top of `CHANGELOG.md` (`## X.Y.Z · YYYY-MM-DD`, one short line per change).
-
-## Constraints
-
-- **Content security policy** (meta tag): `default-src 'none'; script-src 'self' https://legilly.com;
-  style-src 'self' https://legilly.com; img-src 'self' data:`.
-- No third-party scripts, fonts or trackers on legilly.com: the sites under it share browser storage.
-- The color variables (`--bg`, `--card`, `--ink`, `--muted`, `--accent`, `--line`, …) match the Halo game
-  and Anime Dashboard, so the sites look like one family.
+- **Content security policy** in a meta tag on every page: `default-src 'none'`, scripts and styles only from
+  the site itself and `https://legilly.com` (the shared code), no inline scripts or styles, `base-uri 'none'`,
+  `form-action 'none'`. Sizes that depend on data are set from JS, never with `style="…"`.
+- No third-party scripts, fonts, trackers or CDNs on any legilly.com site.
+- Two-factor sign-in is on for the owner's GitHub and Cloudflare accounts: the hub repo runs code on every
+  site, and Cloudflare holds the dashboard's MyAnimeList keys. Keep it that way.
+- The shared script refuses to show a page inside another site's frame (GitHub Pages can't send the header
+  that normally forbids it).
 
 ## Shared code: navigation bar and colour themes
 
@@ -64,6 +61,10 @@ Then add it to the navigation bar too (see "Adding a project to the bar" below).
   `data-theme` (blue, purple, teal, amber, rose) and `data-mode` (light or dark, System resolved) on `<html>`
   before the page draws. `site.css` defines `--bg --card --ink --muted --accent --accent-ink --line --tag
   --track --shadow` per theme and mode; site stylesheets don't redefine these.
+- **Base styles** every site shares are in `site.css` (section 3): `* { box-sizing }`, the `body` font and
+  colours, links and the accent in titles (`h1 span`). Only rules identical on every site go there; a site
+  changes them in its own stylesheet (IdleRPG does, for its dark monospace look). Check all sites when editing.
+- The script also sets `<meta name="theme-color">` (the phone's address bar) to the bar's colour.
 - Text on an accent background uses `var(--accent-ink)`: white in light mode and for Blue in dark mode;
   dark text on the lighter dark-mode accents of the other themes.
 - Dark-only rules are written as `:root[data-mode="dark"] …`, plus `@media (prefers-color-scheme: dark)
@@ -74,8 +75,26 @@ Then add it to the navigation bar too (see "Adding a project to the bar" below).
 - Security rules: sites on legilly.com allow `script-src`/`style-src` `'self' https://legilly.com`; Anime
   Dashboard (anime.legilly.com) needs `https://legilly.com` listed for both.
 
-### Adding a project to the bar
 
-Add it to `GROUPS` in `shared/site.js` (Games or Tools: name, one-line description, address, an `id`), give its
-page `<html data-lg-project="id">`, and load the shared files in its `<head>`. Also add its card to `index.html`
-and its line to the README.
+### Adding a project
+
+1. Hub card: in `index.html`, copy one `<article class="card">` block, paste it at the top of the list, and change
+   the name, description, tags and links (`/repo-name/` for a project under legilly.com). Icons: `icon-halo`,
+   `icon-hash` (shows the `#`), or `icon-letter` (put a letter inside). Open/Play links stay in the same tab;
+   Source links open a new tab (`target="_blank" rel="noopener"`).
+2. Bar: add it to `GROUPS` in `shared/site.js` (Games or Tools: name, one-line description, address, `id`).
+3. The project's pages: `<html data-lg-project="id">`, the shared files in `<head>`, and the security rule above.
+4. The hub README: one line for it. Add the table row above, and give the project its own `MAINTAINING.md`
+   that starts by pointing here.
+
+## The hub itself
+
+- This is the `LeGilly.github.io` repository, published by GitHub Pages; `CNAME` points it at `legilly.com`.
+  Every other repo with GitHub Pages turned on is served under the same domain (`legilly.com/ba-halo-game/`);
+  Anime Dashboard has its own subdomain.
+- DNS for legilly.com is managed in Cloudflare: the GitHub Pages records for legilly.com and anime.legilly.com,
+  and `api.legilly.com`, the custom domain of the dashboard's relay (a Cloudflare Worker).
+- Files: `index.html` (the page), `style.css`, `shared/` (site.js, site.css).
+- Version: in `index.html`, the footer `vX.Y.Z` and the `?v=` on style.css.
+- Testing a change to `shared/`: serve each repo locally and have the browser load `https://legilly.com/shared/`
+  from the local hub folder (e.g. Playwright `route`), then check all four sites, light and dark, and a phone width.

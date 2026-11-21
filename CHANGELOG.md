@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.3.1 · 2026-11-21
+- Shared code: pages refuse to show inside another site's frame
+- Shared code: on phones, the browser's address bar takes the theme's colour
+- Shared code: the base styles common to every site (page font and colours, links) now live here
+
 ## 1.3.0 · 2026-11-21
 - Navigation bar at the top: home button to the hub, Games and Tools menus to switch project, and the theme button
 - Shared code for every site (themes and the bar) now lives here, in `shared/`, and is loaded by all projects

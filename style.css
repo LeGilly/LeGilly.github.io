@@ -1,19 +1,10 @@
 /* Colours and the navigation bar come from shared/site.css (shared by all legilly.com sites). */
 
-* { box-sizing: border-box; }
-body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--ink);
-  font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-}
-a { color: var(--accent); }
 
 .wrap { max-width: 640px; margin: 0 auto; padding: 56px 16px 40px; }
 
 .intro { text-align: center; margin-bottom: 32px; }
 h1 { margin: 0; font-size: 2.4rem; letter-spacing: -0.03em; }
-h1 span { color: var(--accent); }
 .sub { margin: 6px 0 0; color: var(--muted); }
 
 .projects { display: grid; gap: 14px; }

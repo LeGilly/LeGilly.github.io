@@ -23,6 +23,14 @@
   var MODES = [["system", "System"], ["light", "Light"], ["dark", "Dark"]];
   var KEY = "legilly_theme";
   var root = document.documentElement;
+
+  // Never show these pages inside another site's frame (a trick to make visitors click things unknowingly).
+  // GitHub Pages can't send the header that normally forbids it, so the page hides itself and takes over the tab.
+  if (window.top !== window.self) {
+    root.hidden = true;
+    try { window.top.location.replace(window.location.href); } catch (e) { /* not allowed: the page stays hidden */ }
+    return;
+  }
   var here = root.getAttribute("data-lg-project") || "home";
   var darkOnly = root.hasAttribute("data-tp-dark-only");
   var systemDark = window.matchMedia ? window.matchMedia("(prefers-color-scheme: dark)") : null;
@@ -43,6 +51,15 @@
   function apply(p) {
     root.setAttribute("data-theme", p.theme);
     root.setAttribute("data-mode", darkOnly ? "dark" : p.mode === "system" ? (systemDark && systemDark.matches ? "dark" : "light") : p.mode);
+    browserBar();
+  }
+  // Phones colour their address bar with <meta name="theme-color">: match the bar at the top of the page.
+  function browserBar() {
+    var c = window.getComputedStyle ? getComputedStyle(root).getPropertyValue("--card").trim() : "";
+    if (!c || !document.head) return; // styles not loaded yet: done again once the page is ready
+    var m = document.querySelector('meta[name="theme-color"]');
+    if (!m) { m = document.createElement("meta"); m.name = "theme-color"; document.head.appendChild(m); }
+    m.content = c;
   }
   function save(p) {
     var v = p.theme + "." + p.mode;
@@ -91,6 +108,7 @@
         MODES.map(function (m) { return '<button type="button" data-tp-mode="' + m[0] + '">' + m[1] + "</button>"; }).join("") +
       "</div></div></div>";
     document.body.insertBefore(bar, document.body.firstChild);
+    browserBar();
 
     bar.addEventListener("click", function (ev) {
       var b = ev.target.closest("button");
@@ -132,5 +150,6 @@
     bar.querySelectorAll("[data-tp-mode]").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.tpMode === current.mode)); });
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", build); else build();
+  window.addEventListener("load", browserBar); // the stylesheet may finish loading after the page is built
   window.LegillyTheme = { get: function () { return { theme: current.theme, mode: current.mode }; } };
 })();
