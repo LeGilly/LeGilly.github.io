@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.3.0 · 2026-11-21
+- Navigation bar at the top: home button to the hub, Games and Tools menus to switch project, and the theme button
+- Shared code for every site (themes and the bar) now lives here, in `shared/`, and is loaded by all projects
+- Blue theme: slightly darker accent in light mode
+
 ## 1.2.0 · 2026-11-21
 - Colour themes: Blue, Purple, Teal, Amber and Rose, each in light and dark, from the button in the top-right corner. The choice applies to every legilly.com site
 
