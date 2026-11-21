@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.2.0 · 2026-11-21
+- Colour themes: Blue, Purple, Teal, Amber and Rose, each in light and dark, from the button in the top-right corner. The choice applies to every legilly.com site
+
 ## 1.1.3 · 2026-11-21
 - Source links open in a new tab
 
