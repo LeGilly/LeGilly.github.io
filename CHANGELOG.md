@@ -1,7 +1,7 @@
 # Changelog
 
-Versions follow major.minor.patch: see the README. Before 2026-11-21 the site used a single number
-(v1 to v4); the versions below were rebuilt from the commit history.
+## 1.1.3 · 2026-11-21
+- Source links open in a new tab
 
 ## 1.1.2 · 2026-11-21
 - Anime Dashboard description updated
