@@ -32,6 +32,26 @@ apps; decisions and how things are built go in these files.
 5. Pages themselves (the HTML) can stay cached in a browser for up to 10 minutes after a push (GitHub Pages);
    Ctrl+F5 shows the new one at once.
 
+## Tests (every project)
+
+The hub, Anime Dashboard and Who's that Halo? each have browser tests in `tests/` (IdleRPG has none).
+They use Playwright and made-up or trimmed data, never a real MyAnimeList account.
+
+- **On GitHub:** `.github/workflows/tests.yml` runs them on every push (Actions tab → "Tests"; also
+  "Run workflow" on demand). It only shows ✓ or ✗ next to the commit; publishing doesn't wait for it.
+  A failed run keeps a `test-report` download (screenshots, what was expected) for 7 days.
+- **On the owner's PC (optional):** needs Node.js. In the repo folder, once: `npm install` then
+  `npx playwright install chromium`; then `npm test` whenever. `node_modules/` and `test-results/` are ignored
+  by git. To use a browser already installed instead, set `CHROME_PATH` to its .exe.
+- **The shared files:** dashboard and Halo tests load `https://legilly.com/shared/` live. The hub's tests
+  answer `https://legilly.com/` (shared/ included) from the hub folder and load the other sites live, so a
+  change to `shared/` is checked on all four sites before it's pushed. For offline runs:
+  `LEGILLY_SHARED=<hub>/shared` (dashboard, Halo) and `LEGILLY_SITES=<folder holding the repos>` (hub).
+- **Keep them up to date:** when a feature changes or is added, change or add its test in the same commit.
+  A test that fails after a deliberate change is updated to the new behaviour, not deleted. Test names say
+  in plain words what should happen.
+- `package.json` and `package-lock.json` exist only for the tests; the sites themselves load no packages.
+
 ## Rules for every site
 
 - **Content security policy** in a meta tag on every page: `default-src 'none'`, scripts and styles only from
@@ -49,7 +69,7 @@ apps; decisions and how things are built go in these files.
   (`LeGilly.github.io/shared/site.js` and `site.css`) and every site loads them from
   `https://legilly.com/shared/`, in `<head>` before its own stylesheet. A change there reaches every site
   within about 10 minutes of pushing the hub (GitHub Pages cache), with no commit in the other repos.
-  So test a change on all four sites before pushing the hub: a mistake breaks every site at once.
+  So test a change on all four sites before pushing the hub (`npm test` here does it): a mistake breaks every site at once.
 - Each page says which project it belongs to: `<html data-lg-project="home|anime|halo|idlerpg">`
   (highlights it in the bar). `<html data-tp-dark-only>` keeps a site dark (IdleRPG).
 - **The bar** (top of every page, 46 px, `--lg-bar-h`): home icon → hub; **Games** and **Tools** menus
@@ -94,7 +114,8 @@ apps; decisions and how things are built go in these files.
   Anime Dashboard has its own subdomain.
 - DNS for legilly.com is managed in Cloudflare: the GitHub Pages records for legilly.com and anime.legilly.com,
   and `api.legilly.com`, the custom domain of the dashboard's relay (a Cloudflare Worker).
-- Files: `index.html` (the page), `style.css`, `shared/` (site.js, site.css).
+- Files: `index.html` (the page), `style.css`, `shared/` (site.js, site.css), `tests/` (see Tests above).
 - Version: in `index.html`, the footer `vX.Y.Z` and the `?v=` on style.css.
-- Testing a change to `shared/`: serve each repo locally and have the browser load `https://legilly.com/shared/`
-  from the local hub folder (e.g. Playwright `route`), then check all four sites, light and dark, and a phone width.
+- Tests: `tests/bar.spec.mjs` (bar, menus, theme panel and the theme carrying across sites, phone widths and
+  frame protection, on all four sites) and `tests/hub.spec.mjs` (cards match the bar, Source links, version).
+  `tests/sites.mjs` puts this folder in place of the live hub. Also look at a change yourself, light and dark.

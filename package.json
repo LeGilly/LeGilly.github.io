@@ -1,0 +1,12 @@
+{
+  "name": "legilly-hub-tests",
+  "private": true,
+  "description": "Tests for the hub and the shared bar (not used by the site itself).",
+  "type": "module",
+  "scripts": {
+    "test": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.65.1"
+  }
+}
