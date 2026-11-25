@@ -8,6 +8,8 @@
   "use strict";
 
   /* ---------- the projects (add new ones here) ---------- */
+  // [menu name, projects, shorter name for phones (optional)]. A project that isn't a website
+  // (a mod for a game) points to its GitHub page; nothing there loads this script.
   var HOME = "https://legilly.com/";
   var GROUPS = [
     ["Games", [
@@ -17,6 +19,9 @@
     ["Tools", [
       { id: "anime", name: "Anime Dashboard", desc: "Browse and update MyAnimeList lists", url: "https://anime.legilly.com/" },
     ]],
+    ["Idle game optimisers", [
+      { id: "fcplus", name: "Frozen Cookies Plus", desc: "A Cookie Clicker mod that plays the game for you", url: "https://github.com/LeGilly/frozen-cookies-plus" },
+    ], "Optimisers"],
   ];
 
   var THEMES = [["blue", "Blue"], ["purple", "Purple"], ["teal", "Teal"], ["amber", "Amber"], ["rose", "Rose"]];
@@ -90,7 +95,7 @@
     var menus = GROUPS.map(function (g, i) {
       var mine = g[1].some(function (p) { return p.id === here; });
       return '<div class="lg-menu"><button type="button" class="lg-cat' + (mine ? " lg-here" : "") + '" aria-expanded="false" aria-controls="lgDrop' + i + '">' +
-        esc(g[0]) + ICON_DOWN + '</button><div class="lg-drop" id="lgDrop' + i + '" hidden>' +
+        (g[2] ? '<span class="lg-long">' + esc(g[0]) + '</span><span class="lg-short">' + esc(g[2]) + "</span>" : esc(g[0])) + ICON_DOWN + '</button><div class="lg-drop" id="lgDrop' + i + '" hidden>' +
         g[1].map(function (p) {
           return '<a href="' + esc(p.url) + '"' + (p.id === here ? ' aria-current="page"' : "") + "><strong>" + esc(p.name) + "</strong><small>" + esc(p.desc) + "</small></a>";
         }).join("") + "</div></div>";

@@ -11,10 +11,30 @@ test("every project in the bar has a card, and the cards lead to the same places
   await page.goto(URLS.home);
   await expect(page.locator(".lg-bar")).toBeVisible();
   const inBar = await page.locator(".lg-drop a").evaluateAll((as) => as.map((a) => a.href));
-  const cards = await page.locator(".card h2 a").evaluateAll((as) => as.map((a) => a.href));
+  const cards = await page.locator(".card h3 a").evaluateAll((as) => as.map((a) => a.href));
   expect(cards.sort()).toEqual(inBar.sort());
-  const opens = await page.locator(".card .btn").evaluateAll((as) => as.map((a) => a.href));
-  expect(opens.sort()).toEqual(inBar.sort());
+  // The main button opens the project; a mod (not a website) has Download, to its latest release instead.
+  for (const card of await page.locator(".card").all()) {
+    const main = await card.locator("h3 a").getAttribute("href").then((h) => new URL(h, URLS.home).href);
+    const btn = card.locator(".btn");
+    if ((await btn.textContent()) === "Download") await expect(btn).toHaveAttribute("href", main + "/releases/latest");
+    else expect(await btn.evaluate((a) => a.href)).toBe(main);
+  }
+});
+
+test("the cards are grouped under the bar's menus, in the same order", async ({ page }) => {
+  await page.goto(URLS.home);
+  await expect(page.locator(".lg-bar")).toBeVisible();
+  const groups = await page.evaluate(() => ({
+    bar: [...document.querySelectorAll(".lg-menu")].map((m) => [
+      (m.querySelector(".lg-long") || m.querySelector(".lg-cat")).textContent.trim(),
+      [...m.querySelectorAll(".lg-drop a")].map((a) => a.href)]),
+    page: [...document.querySelectorAll("section.group")].map((s) => [
+      s.querySelector("h2").textContent.trim(),
+      [...s.querySelectorAll(".card h3 a")].map((a) => a.href)]),
+  }));
+  expect(groups.page.map((g) => g[0])).toEqual(["Games", "Tools", "Idle game optimisers"]);
+  expect(groups.page.map((g) => [g[0], g[1].sort()])).toEqual(groups.bar.map((g) => [g[0], g[1].sort()]));
 });
 
 test("Source links open in a new tab", async ({ page }) => {

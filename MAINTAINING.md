@@ -12,6 +12,7 @@ apps; decisions and how things are built go in these files.
 | `anime-dashboard` | https://anime.legilly.com | Tool (with a Cloudflare relay at api.legilly.com) |
 | `ba-halo-game` | https://legilly.com/ba-halo-game/ | Game |
 | `irc-idlerpg-web` | https://legilly.com/irc-idlerpg-web/ | Game (the one the owner returns to least: keep changes minimal) |
+| `frozen-cookies-plus` | https://github.com/LeGilly/frozen-cookies-plus (no page on legilly.com) | Idle game optimiser: a Cookie Clicker mod for Steam, released as a zip. Not a website, so the site rules below don't apply to it; `docs/HUB_BRIEF.md` there says how to describe it here |
 
 ## How the owner works
 
@@ -34,7 +35,8 @@ apps; decisions and how things are built go in these files.
 
 ## Tests (every project)
 
-The hub, Anime Dashboard and Who's that Halo? each have browser tests in `tests/` (IdleRPG has none).
+The hub, Anime Dashboard and Who's that Halo? each have browser tests in `tests/` (IdleRPG has none;
+Frozen Cookies Plus has its own, run against the real game: see its `MAINTAINING.md`).
 They use Playwright and made-up or trimmed data, never a real MyAnimeList account.
 
 - **On GitHub:** `.github/workflows/tests.yml` runs them on every push (Actions tab → "Tests"; also
@@ -72,9 +74,12 @@ They use Playwright and made-up or trimmed data, never a real MyAnimeList accoun
   So test a change on all four sites before pushing the hub (`npm test` here does it): a mistake breaks every site at once.
 - Each page says which project it belongs to: `<html data-lg-project="home|anime|halo|idlerpg">`
   (highlights it in the bar). `<html data-tp-dark-only>` keeps a site dark (IdleRPG).
-- **The bar** (top of every page, 46 px, `--lg-bar-h`): home icon → hub; **Games** and **Tools** menus
-  listing every project (current one highlighted); theme button on the right. The project list is
-  `GROUPS` at the top of `site.js`. The bar replaced every "← All projects" link: don't add back links.
+- **The bar** (top of every page, 46 px, `--lg-bar-h`): home icon → hub; **Games**, **Tools** and
+  **Idle game optimisers** menus listing every project (current one highlighted); theme button on the right.
+  The project list is `GROUPS` at the top of `site.js`: `[menu name, projects, shorter name]`. The shorter
+  name is optional and replaces the menu name at 560 px and below ("Optimisers"), so the bar fits a phone.
+  Keep the bar within 390 px wide (the tests check it) before adding a fourth menu.
+  The bar replaced every "← All projects" link: don't add back links.
   Pages get `padding-top` for it from the start (`html.lg-bar-on`), so nothing jumps when it's drawn.
 - **Themes:** the script reads the `legilly_theme` cookie (`theme.mode`, e.g. `purple.dark`;
   `Domain=legilly.com` so every subdomain shares it; localStorage elsewhere, e.g. localhost) and sets
@@ -98,14 +103,20 @@ They use Playwright and made-up or trimmed data, never a real MyAnimeList accoun
 
 ### Adding a project
 
-1. Hub card: in `index.html`, copy one `<article class="card">` block, paste it at the top of the list, and change
-   the name, description, tags and links (`/repo-name/` for a project under legilly.com). Icons: `icon-halo`,
-   `icon-hash` (shows the `#`), or `icon-letter` (put a letter inside). Open/Play links stay in the same tab;
-   Source links open a new tab (`target="_blank" rel="noopener"`).
-2. Bar: add it to `GROUPS` in `shared/site.js` (Games or Tools: name, one-line description, address, `id`).
+1. Hub card: in `index.html` the cards sit in one `<section class="group">` per bar menu (Games, Tools,
+   Idle game optimisers), in the bar's order. Copy one `<article class="card">` block into its category's section
+   (newest at the top) and change the name (`<h3>`), description, tags and links (`/repo-name/` for a project
+   under legilly.com). Icons: `icon-halo`, `icon-hash` (shows the `#`), `icon-letter` (put a letter inside) or
+   `icon-cookie`. Open/Play links stay in the same tab; Source links open a new tab (`target="_blank" rel="noopener"`).
+   A new category: a new section and a new menu in `GROUPS`, with the same name.
+2. Bar: add it to `GROUPS` in `shared/site.js` (its menu: name, one-line description, address, `id`).
 3. The project's pages: `<html data-lg-project="id">`, the shared files in `<head>`, and the security rule above.
 4. The hub README: one line for it. Add the table row above, and give the project its own `MAINTAINING.md`
    that starts by pointing here.
+
+A project that isn't a website (Frozen Cookies Plus, a game mod): its address in the bar and the card title is
+its GitHub repository (the README explains and installs it), and the card's button is **Download**, to
+`<repo>/releases/latest`. Step 3 doesn't apply; nothing of it loads the shared files.
 
 ## The hub itself
 
@@ -116,6 +127,7 @@ They use Playwright and made-up or trimmed data, never a real MyAnimeList accoun
   and `api.legilly.com`, the custom domain of the dashboard's relay (a Cloudflare Worker).
 - Files: `index.html` (the page), `style.css`, `shared/` (site.js, site.css), `tests/` (see Tests above).
 - Version: in `index.html`, the footer `vX.Y.Z` and the `?v=` on style.css.
-- Tests: `tests/bar.spec.mjs` (bar, menus, theme panel and the theme carrying across sites, phone widths and
-  frame protection, on all four sites) and `tests/hub.spec.mjs` (cards match the bar, Source links, version).
+- Tests: `tests/bar.spec.mjs` (bar, the three menus, the shorter menu name on phones, theme panel and the theme
+  carrying across sites, phone widths and frame protection, on all four sites) and `tests/hub.spec.mjs` (cards
+  match the bar and are grouped like its menus, Download for a mod, Source links, version).
   `tests/sites.mjs` puts this folder in place of the live hub. Also look at a change yourself, light and dark.

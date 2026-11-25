@@ -1,7 +1,7 @@
 /* Shared by every legilly.com site, served from https://legilly.com/shared/ (hub repo, see MAINTAINING.md).
    1. Colour themes. site.js sets data-theme (blue, purple, teal, amber, rose) and data-mode (light, dark)
       on <html> before the page draws. Without it, the blue theme follows the system's light/dark setting.
-   2. The navigation bar at the top of every page (home, Games, Tools, theme button).
+   2. The navigation bar at the top of every page (home, Games, Tools, Idle game optimisers, theme button).
    3. A few base styles every site shares (sites may override them in their own stylesheet). */
 :root {
   color-scheme: light dark;
@@ -216,6 +216,11 @@ html.lg-bar-on body { padding-top: var(--lg-bar-h); } /* room for the bar before
 .tp-amber { background: linear-gradient(135deg, #b2580b 50%, #ffa264 50%); }
 .tp-rose { background: linear-gradient(135deg, #c72481 50%, #ff89c2 50%); }
 
+.lg-short { display: none; } /* a menu's shorter name, for narrow screens */
+@media (max-width: 560px) {
+  .lg-long { display: none; }
+  .lg-short { display: inline; }
+}
 @media (max-width: 420px) {
   .lg-bar { padding: 0 6px; gap: 2px; }
   .lg-cat { padding: 0 8px; }

@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.4.0 · 2026-11-25
+- New category, Idle game optimisers, with its first project: Frozen Cookies Plus, a Cookie Clicker mod (Download leads to its latest release)
+- Projects are grouped on the page under Games, Tools and Idle game optimisers, like the bar's menus
+- Shared code: a third menu in the bar, Idle game optimisers (shortened to "Optimisers" on phones)
+
 ## 1.3.1 · 2026-11-21
 - Shared code: pages refuse to show inside another site's frame
 - Shared code: on phones, the browser's address bar takes the theme's colour

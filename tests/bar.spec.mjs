@@ -32,7 +32,9 @@ for (const [key, url] of Object.entries(URLS)) {
     await page.goto(url);
     await expect(page.locator(".lg-bar")).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-    for (const i of [0, 1]) {
+    const menus = await page.locator(".lg-cat").count();
+    expect(menus).toBe(3);
+    for (let i = 0; i < menus; i++) {
       await page.locator(".lg-cat").nth(i).click();
       const d = await page.locator(`#lgDrop${i}`).boundingBox();
       expect(d.x).toBeGreaterThanOrEqual(0);
@@ -54,13 +56,29 @@ test("menus: one open at a time, Escape and clicking outside close them", async 
   await page.click(".lg-cat >> text=Tools");
   await expect(page.locator("#lgDrop0")).toBeHidden();
   await expect(page.locator("#lgDrop1 a")).toHaveAttribute("href", URLS.anime);
-  await page.keyboard.press("Escape");
+  await page.click(".lg-cat >> text=Idle game optimisers");
   await expect(page.locator("#lgDrop1")).toBeHidden();
+  await expect(page.locator("#lgDrop2 a")).toHaveAttribute("href", "https://github.com/LeGilly/frozen-cookies-plus");
+  await expect(page.locator("#lgDrop2 a")).toContainText("Frozen Cookies Plus");
+  await page.keyboard.press("Escape");
+  await expect(page.locator("#lgDrop2")).toBeHidden();
   expect(await page.evaluate(() => document.activeElement.classList.contains("lg-cat"))).toBe(true);
   await page.click(".lg-cat >> text=Games");
   await page.mouse.click(600, 600);
   await expect(page.locator("#lgDrop0")).toBeHidden();
   await expect(page.locator(".lg-home")).toHaveAttribute("href", URLS.home);
+});
+
+test("Idle game optimisers is shortened to Optimisers on phones", async ({ page }) => {
+  await page.goto(URLS.home);
+  const cat = page.locator(".lg-cat").nth(2);
+  await expect(cat.locator(".lg-long")).toBeVisible();
+  await expect(cat.locator(".lg-long")).toHaveText("Idle game optimisers");
+  await expect(cat.locator(".lg-short")).toBeHidden();
+  await page.setViewportSize({ width: 390, height: 760 });
+  await expect(cat.locator(".lg-short")).toBeVisible();
+  await expect(cat.locator(".lg-short")).toHaveText("Optimisers");
+  await expect(cat.locator(".lg-long")).toBeHidden();
 });
 
 test("a theme picked on one site is used on all of them; IdleRPG stays dark", async ({ page }) => {
