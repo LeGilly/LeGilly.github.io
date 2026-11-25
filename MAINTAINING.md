@@ -18,6 +18,9 @@ apps; decisions and how things are built go in these files.
 
 - Changes are committed and pushed by the owner with GitHub Desktop. An assistant writes files into the repo
   folders and suggests a one-line commit summary; it doesn't commit or push.
+- Commit summaries are written `X.Y.Z : what changed`, with the project's new version (e.g.
+  `1.6.0 : Show how many halos were added in the last two weeks`). A change that needs no new version
+  (README, MAINTAINING, comments) uses the project's current version.
 - Keep each file's line endings as they are (the two game repos use Windows CRLF on the owner's PC).
 - READMEs describe only what the app does and how it works; no process or decisions.
 - Whenever something is decided or changed in how a project works, update the matching `MAINTAINING.md`.
