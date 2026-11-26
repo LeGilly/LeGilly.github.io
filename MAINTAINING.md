@@ -31,7 +31,18 @@ apps; decisions and how things are built go in these files.
    major = a big change in what the project is or does.
 2. Set the new version where each project shows it (listed in its `MAINTAINING.md`): the visible `vX.Y.Z`
    and every `?v=` on its own CSS/JS, so browsers fetch the fresh files.
-3. Add an entry at the top of the project's `CHANGELOG.md`: `## X.Y.Z · YYYY-MM-DD`, then one short line per change.
+3. Add an entry at the top of the project's `CHANGELOG.md`: `## X.Y.Z · YYYY-MM-DD`, then the changes sorted
+   under these headings, in this order, keeping only the ones that have something (from 2026-11-26 on;
+   older entries stay as they were):
+   - `### Added`: new features or capabilities.
+   - `### Changed`: updates or modifications to existing functionality.
+   - `### Deprecated`: features that remain available now but will be removed in a future release.
+   - `### Removed`: features or functionality that have been completely taken out.
+   - `### Fixed`: bug fixes.
+   - `### Security`: fixes for vulnerabilities or security issues.
+
+   One short line per change under its heading. Tests and release scripts only read the `## X.Y.Z` line,
+   so the `###` headings are safe there (and show as headings in GitHub release notes).
 4. Changes that don't show (README, MAINTAINING, comments) need no new version.
 5. Pages themselves (the HTML) can stay cached in a browser for up to 10 minutes after a push (GitHub Pages);
    Ctrl+F5 shows the new one at once.
