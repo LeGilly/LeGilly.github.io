@@ -24,6 +24,10 @@ apps; decisions and how things are built go in these files.
 - Keep each file's line endings as they are (the two game repos use Windows CRLF on the owner's PC).
 - READMEs describe only what the app does and how it works; no process or decisions.
 - Whenever something is decided or changed in how a project works, update the matching `MAINTAINING.md`.
+- **Plan before code.** When the owner brings up a new feature or a problem, an assistant first presents
+  what it found (from the code, data or game files) and the approach it suggests, then waits for the owner's
+  go before writing or changing any file. The owner reviews that plan and may push back on anything
+  interesting or odd in it.
 
 ## Versions and releases (every project)
 
